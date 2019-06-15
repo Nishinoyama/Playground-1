@@ -1,12 +1,12 @@
 /*jshint esversion: 6 */
-//don't move
 var width = window.innerWidth;
 var height = window.innerHeight;
 var x = width/2;
 var y = height/2;
 var stage = new PIXI.Container();
 var renderer = PIXI.autoDetectRenderer(width, height,{
-    resolution: 1
+    resolution: 1,
+    antialias: true,
 });
 document.getElementById("pixiview").appendChild(renderer.view);
 window.onresize = function () {
@@ -17,7 +17,7 @@ var time=0;
 function animate(){
     requestAnimationFrame(animate);
     time++;
-    if(time==10){
+    if(time==3){
         addobj(obj_shot*o,obj_shot*(o+1),5,"0xff000",x,y,circle);
         for(var a=obj_shot*o;a<obj_shot*(o+1);a++){
             for(var b=0;b<circle[a].length;b++){
@@ -50,22 +50,11 @@ function animate(){
         if(count==obj_shot){
             circle.splice(0, obj_shot);
             o--;
+            textobj.text--;
         }
     }
     renderer.render(stage);
 }
-
-$(document).on("keyup",(e)=>{
-    if(e.keyCode==13){
-        addobj(obj_shot*o,obj_shot*(o+1),5,"0xff000",x,y,circle);
-        for(var a=obj_shot*o;a<obj_shot*(o+1);a++){
-            for(var b=0;b<circle[a].length;b++){
-                stage.addChild(circle[a][b]);
-            }
-        }
-        o++;
-    }
-});
 
 var circle=[];
 var obj_shot=60;
@@ -82,6 +71,7 @@ function addobj(mas,num,rad,color,x,y,obj){
         obj[i][0].x=x;
         obj[i][0].y=y;
     }
+    textobj.text++;
 }
 
 function objset(num,x,y,obj){
@@ -89,4 +79,8 @@ function objset(num,x,y,obj){
     obj[num][0].y=y;
 }
 
+var word = "0";
+var style = {fontFamily : 'Arial',fontSize : '40px', fill:'white', fontWeight : "bold"};
+var textobj = new PIXI.Text(word, style);
+stage.addChild(textobj);
 animate();
