@@ -40,7 +40,7 @@ function animate(){
                 ymove = sy+Math.sin(i*(Math.PI/180))*(5);
                 objset(l,xmove,ymove,circle);
                 if(circle[l][0].x>x*2 || circle[l][0].x<0 || circle[l][0].y>y*2 || circle[l][0].y<0){
-                    circle[l][0].clear();
+                    //circle[l][0].clear();
                     circle[l][0]="";
                     count++;
                 }
@@ -59,14 +59,24 @@ function animate(){
 var circle=[];
 var obj_shot=60;
 var o=0;
+
+var PIXIGraph = new Array( 40000 );
+for (let i = 0; i < PIXIGraph.length; i++) {
+    PIXIGraph[i] = new PIXI.Graphics();
+}
+// PIXIGraph.fill( new PIXI.Graphics() );
+
 function addobj(mas,num,rad,color,x,y,obj){
     for(var i=mas;i<num+mas;i++){
         obj[i] = [];
-        obj[i][0] = new PIXI.Graphics();
+        // if( i%1000 == 0) console.log( i );
+        obj[i][0] = PIXIGraph[i];
+        obj[i][0].clear();
         obj[i][0].beginFill(color, 1);
         obj[i][0].drawCircle(0,0,rad);
         obj[i][0].globalCompositeOperation = 'destination-over';
         obj[i][0].endFill();
+
 
         obj[i][0].x=x;
         obj[i][0].y=y;
