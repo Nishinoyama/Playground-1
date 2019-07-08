@@ -59,10 +59,16 @@ function animate(){
 var circle=[];
 var obj_shot=60;
 var o=0;
+
+var PIXIGraph = new Array(10000);
+for (let index = 0; index < PIXIGraph.length; index++) {
+    PIXIGraph[index] = new PIXI.Graphics();
+}
+
 function addobj(mas,num,rad,color,x,y,obj){
     for(var i=mas;i<num+mas;i++){
         obj[i] = [];
-        obj[i][0] = new PIXI.Graphics();
+        obj[i][0] = PIXIGraph[i];
         obj[i][0].beginFill(color, 1);
         obj[i][0].drawCircle(0,0,rad);
         obj[i][0].globalCompositeOperation = 'destination-over';
