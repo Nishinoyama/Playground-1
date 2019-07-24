@@ -66,7 +66,7 @@ var geometry = new THREE.CubeGeometry(100, 100, 100);
 // var edges = new THREE.EdgesGeometry(geometry);
 
 var box=[];
-var box_num=200;
+var box_num=10;
 const meshList = [];
 for(var i=0;i<box_num;i++){
     var material = new THREE.MeshStandardMaterial( { color: 0x008888 } );
