@@ -71,9 +71,9 @@ const meshList = [];
 for(var i=0;i<box_num;i++){
     var material = new THREE.MeshStandardMaterial( { color: 0x008888 } );
     box[i] = new THREE.Mesh(geometry,material);
-    var x = Math.floor(Math.random()*1000);
-    var y = Math.floor(Math.random()*1000);
-    var z = Math.floor(Math.random()*1000);
+    var x = Math.floor(Math.random()*500);
+    var y = Math.floor(Math.random()*500);
+    var z = Math.floor(Math.random()*500);
     box[i].position.set(x,y,z);
     scene.add(box[i]);
     meshList.push(box[i]);
