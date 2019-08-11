@@ -40,12 +40,17 @@ rendererThree.setSize(width, height);
 const scene = new THREE.Scene();
 // カメラを作成
 const camera = new THREE.PerspectiveCamera(60, width / height);
-camera.position.set(1000, 1000, 1000);
+var cam_x = 1000;
+var cam_y = 1000;
+var cam_z = 1000;
+camera.position.set(cam_x,cam_y,cam_z);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+//var controls = new THREE.TrackballControls(camera);
 
 var light=[];
 var lightHelper=[];
-var lig_num=5;
+var lig_num=10;
 for(var i=0;i<lig_num;i++){
     light[i] = new THREE.DirectionalLight(0xffffff);
     var x = Math.floor(Math.random()*500)-250;
@@ -66,17 +71,30 @@ var geometry = new THREE.CubeGeometry(100, 100, 100);
 // var edges = new THREE.EdgesGeometry(geometry);
 
 var box=[];
-var box_num=10;
+var box_num=5;
 const meshList = [];
+var linegeometry=[];
+var line=[];
+var count=[];
 for(var i=0;i<box_num;i++){
-    var material = new THREE.MeshStandardMaterial( { color: 0x008888 } );
+    var material = new THREE.MeshStandardMaterial( { color: 0x000000 } );
     box[i] = new THREE.Mesh(geometry,material);
-    var x = Math.floor(Math.random()*500);
-    var y = Math.floor(Math.random()*500);
-    var z = Math.floor(Math.random()*500);
+    var x = Math.floor(Math.random()*700);
+    var y = Math.floor(Math.random()*700);
+    var z = Math.floor(Math.random()*700);
     box[i].position.set(x,y,z);
     scene.add(box[i]);
+
     meshList.push(box[i]);
+
+    linegeometry[i] = new THREE.Geometry();
+    linegeometry[i].vertices.push( new THREE.Vector3( x, y, z) );
+    linegeometry[i].vertices.push( new THREE.Vector3( x, y, z) );
+    linegeometry[i].vertices.push( new THREE.Vector3( x, y, z) );
+    line[i] = new THREE.Line( linegeometry[i], new THREE.LineBasicMaterial( { color: 0x990000} ) );
+    scene.add( line[i] );
+
+    count[i]=0;
 }
 
 const mouse = new THREE.Vector2();
@@ -93,9 +111,10 @@ function handleMouseMove(event) {
     // -1〜+1の範囲で現在のマウス座標を登録する
     mouse.x = (x / w) * 2 - 1;
     mouse.y = -(y / h) * 2 + 1;
-  }
-  // 毎フレーム時に実行されるループイベントです
-  function tick() {
+}
+// 毎フレーム時に実行されるループイベントです
+var n=2;
+function tick() {
     // レイキャスト = マウス位置からまっすぐに伸びる光線ベクトルを生成
     raycaster.setFromCamera(mouse, camera);
     // その光線とぶつかったオブジェクトを得る
@@ -104,23 +123,64 @@ function handleMouseMove(event) {
       // 交差しているオブジェクトが1つ以上存在し、
       // 交差しているオブジェクトの1番目(最前面)のものだったら
       if (intersects.length > 0 && mesh === intersects[0].object) {
-        // 色を赤くする
-        mesh.material.color.setHex(0xff0000);
+        for(const i in box){
+          if(mesh==box[i]){
+            if(150>n*count[i]){
+              menu_bar_dia(1,i);
+            }else if(300>n*count[i]){
+              menu_bar_str(1,i);
+            }
+          }
+        }
+
+        mesh.material.color.setHex(0x0000ff);
       } else {
-        // それ以外は元の色にする
-        mesh.material.color.setHex(0x008888);
+        for(const i in box){
+          if(mesh==box[i]){
+              if(150<n*count[i]){
+                menu_bar_str(-1,i);
+              }else if(0<n*count[i]){
+                menu_bar_dia(-1,i);
+              }
+          }
+        }
+        mesh.material.color.setHex(0x00ff00);
       }
     });
 }
+
+function menu_bar_dia(sn,i){
+  linegeometry[i].vertices[1].x+=sn*n*Math.cos(45);
+  linegeometry[i].vertices[1].y+=sn*n;
+  linegeometry[i].vertices[1].z-=sn*n*Math.cos(45);
+  linegeometry[i].vertices[2].x+=sn*n*Math.cos(45);
+  linegeometry[i].vertices[2].y+=sn*n;
+  linegeometry[i].vertices[2].z-=sn*n*Math.cos(45);
+  count[i]+=sn;
+}
+function menu_bar_str(sn,i){
+  linegeometry[i].vertices[2].x+=sn*n*Math.cos(45);
+  linegeometry[i].vertices[2].z-=sn*n*Math.cos(45);
+  count[i]+=sn;
+}
+
 
 function effectmain() {
     for(var i=0;i<lig_num;i++){
         lightHelper[i].update();
     }
-    for(var i=0;i<box_num;i++){
-        box[i].rotation.y+=0.01;
+    for(var l=0;l<box_num;l++){
+        box[l].rotation.y+=0.01;
     }
     tick();
+
+    for(const i in box){
+      linegeometry[i].verticesNeedUpdate = true;
+      linegeometry[i].elementNeedUpdate = true;
+      linegeometry[i].computeFaceNormals();
+    }
+
+    //controls.update();
     rendererThree.render(scene, camera);
 }
 
